@@ -9,7 +9,9 @@ import { TelemetryProvider } from "@/context/telemetry-context"
 import { useTelemetry } from "@/hooks/use-telemetry"
 import { MachinePauseBanner } from "@/components/telemetry/machine-pause-banner"
 import { SystemStatusBar } from "@/components/telemetry/system-status-bar"
+import { ServoGateControl } from "@/components/actuator/servo-gate-control"
 import { ShapeTelemetryGrid } from "@/components/telemetry/shape-telemetry-grid"
+import { AccessAuditTrail } from "@/components/audit/access-audit-trail"
 
 function AuthenticatedWorkspace({ session }: { session: OperatorSession }) {
   const telemetry = useTelemetry()
@@ -44,8 +46,14 @@ function AuthenticatedWorkspace({ session }: { session: OperatorSession }) {
       {/* Authoritative System Status Bar (ADR-0007 / Ticket 03) */}
       <SystemStatusBar />
 
+      {/* Authoritative Sorting Servo Gate Actuation (ADR-0006, ADR-0008 / Ticket 05) */}
+      <ServoGateControl />
+
       {/* Geometric Shape Telemetry Cards with 3-Bit Binary Indicators (Ticket 04) */}
       <ShapeTelemetryGrid />
+
+      {/* Access Audit Trail (ADR-0005 / Ticket 05) */}
+      <AccessAuditTrail />
 
       {/* Overview Cards */}
       <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
