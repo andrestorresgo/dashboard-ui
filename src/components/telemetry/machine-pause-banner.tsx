@@ -35,7 +35,7 @@ export function MachinePauseBanner({ isPaused: explicitIsPaused, className }: Ma
           </AlertTitle>
           <AlertDescription className="text-xs text-destructive/90 sm:text-sm">
             Physical emergency push-button engaged on Actuator (Board B). DC conveyor motor is de-energized,
-            servo gate is locked, and sorting counters are halted per ADR-0004 hardware safety lockout.
+            servo gate is locked, and sorting counters are halted.
           </AlertDescription>
         </div>
         <div className="mt-2 shrink-0 sm:mt-0">

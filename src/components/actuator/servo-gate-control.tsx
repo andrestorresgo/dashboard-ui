@@ -9,7 +9,7 @@ import {
   X,
   Info,
 } from "lucide-react"
-import { Card, CardHeader, CardTitle, CardDescription, CardContent } from "@/components/ui/card"
+import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card"
 import { Switch } from "@/components/ui/switch"
 import { Badge } from "@/components/ui/badge"
 import { Alert, AlertTitle, AlertDescription } from "@/components/ui/alert"
@@ -121,7 +121,7 @@ export function ServoGateControl({
   }
 
   const tooltipText = isPaused
-    ? "Actuator Lockout (ADR-0004): Servo gate actuation is disabled while Machine Pause is active."
+    ? "Actuator Lockout: Servo gate actuation is disabled while Machine Pause is active."
     : isPending
       ? `Awaiting verified telemetry confirmation from Board A (${pendingTarget})...`
       : `Click to ${servoState ? "CLOSE" : "OPEN"} the physical sorting servo gate.`
@@ -138,9 +138,6 @@ export function ServoGateControl({
               <CardTitle className="text-base font-semibold">
                 Authoritative Servo Gate Actuation
               </CardTitle>
-              <CardDescription className="text-xs">
-                Remote physical sorting gate control with Board A telemetry acknowledgment (ADR-0006, ADR-0008).
-              </CardDescription>
             </div>
           </div>
           {getHeaderBadge()}
@@ -201,7 +198,7 @@ export function ServoGateControl({
             <Loader2 className="size-4 animate-spin text-primary" />
             <div className="flex-1">
               <span className="font-semibold text-primary">Acknowledgment Pending:</span>{" "}
-              Dispatched <code className="font-mono text-xs">POST /api/v1/actuator/servo</code> ({pendingTarget}). Holding visual position until authoritative Board A heartbeat arrives (ADR-0008).
+              Dispatched <code className="font-mono text-xs">POST /api/v1/actuator/servo</code> ({pendingTarget}). Holding visual position until authoritative Board A heartbeat arrives.
             </div>
           </div>
         )}
@@ -211,7 +208,7 @@ export function ServoGateControl({
           <div className="flex items-center gap-2.5 rounded-lg border border-destructive/30 bg-destructive/5 p-3 text-xs text-destructive">
             <ShieldAlert className="size-4 shrink-0" />
             <div>
-              <span className="font-semibold">Actuator Lockout (ADR-0004):</span> Servo gate actuation is halted. Push button on Board B must be toggled to resume remote actuation.
+              <span className="font-semibold">Actuator Lockout:</span> Servo gate actuation is halted. Push button on Board B must be toggled to resume remote actuation.
             </div>
           </div>
         )}

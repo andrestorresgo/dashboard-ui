@@ -39,7 +39,7 @@ describe("ServoGateControl Component (ADR-0004, ADR-0006, ADR-0008)", () => {
     )
 
     expect(html).toContain("LOCKED (Pause Active)")
-    expect(html).toContain("Actuator Lockout (ADR-0004)")
+    expect(html).toContain("Actuator Lockout:")
     expect(html).toContain("data-disabled")
   })
 

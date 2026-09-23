@@ -266,7 +266,7 @@ export function OperatorLoginCard({ onLoginSuccess, defaultUserId = 1 }: Operato
               <AlertDescription className="text-xs">
                 User Locked! Retry in <span className="font-mono font-bold text-destructive underline">{remainingSeconds}s</span>...
                 <p className="mt-1 text-[11px] text-muted-foreground">
-                  Consecutive failed attempts triggered a safety cooldown per ADR-0005. Inputs are frozen for this operator until the timer expires.
+                  Consecutive failed attempts triggered a safety cooldown. Inputs are frozen for this operator until the timer expires.
                 </p>
               </AlertDescription>
             </Alert>

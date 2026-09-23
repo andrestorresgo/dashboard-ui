@@ -89,7 +89,7 @@ export class ServoActuationController {
   ): Promise<void> {
     if (isPaused) {
       this.setState({
-        error: "Actuation locked out: Machine Pause active (ADR-0004). Remote gate commands are disabled.",
+        error: "Actuation locked out: Machine Pause active. Remote gate commands are disabled.",
       })
       return
     }
@@ -119,7 +119,7 @@ export class ServoActuationController {
           isPending: false,
           pendingTarget: null,
           error:
-            "Actuation Timeout: Board A telemetry did not confirm gate position within 3.0s. Reverted to authoritative state (ADR-0008).",
+            "Actuation Timeout: Board A telemetry did not confirm gate position within 3.0s. Reverted to authoritative state.",
         })
       }
     }, this.timeoutMs)
@@ -165,7 +165,7 @@ export class ServoActuationController {
       this.setState({
         isPending: false,
         pendingTarget: null,
-        error: "Actuation cancelled: Machine Pause engaged (ADR-0004). Gate locked.",
+        error: "Actuation cancelled: Machine Pause engaged. Gate locked.",
       })
     }
   }

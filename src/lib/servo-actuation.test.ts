@@ -27,7 +27,7 @@ describe("ServoActuationController (ADR-0004, ADR-0006, ADR-0008)", () => {
 
     expect(apiCalled).toBe(false)
     expect(controller.getState().isPending).toBe(false)
-    expect(controller.getState().error).toContain("Machine Pause active (ADR-0004)")
+    expect(controller.getState().error).toContain("Machine Pause active")
   })
 
   it("dispatches servo command and enters pending acknowledgment state without optimistic toggle (ADR-0008)", async () => {
@@ -106,7 +106,7 @@ describe("ServoActuationController (ADR-0004, ADR-0006, ADR-0008)", () => {
     const state = controller.getState()
     expect(state.isPending).toBe(false)
     expect(state.pendingTarget).toBe(null)
-    expect(state.error).toContain("Actuation cancelled: Machine Pause engaged (ADR-0004)")
+    expect(state.error).toContain("Actuation cancelled: Machine Pause engaged")
   })
 
   it("handles HTTP dispatch failure and reports explanatory error", async () => {

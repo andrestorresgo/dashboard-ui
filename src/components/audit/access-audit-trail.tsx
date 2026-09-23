@@ -15,7 +15,6 @@ import {
   Card,
   CardHeader,
   CardTitle,
-  CardDescription,
   CardContent,
 } from "@/components/ui/card"
 import {
@@ -169,9 +168,6 @@ export function AccessAuditTrail({
               <CardTitle className="text-base font-semibold">
                 Security Access Audit Trail
               </CardTitle>
-              <CardDescription className="text-xs">
-                Immutable, append-only log of terminal authentication attempts across physical keypad and web dashboard (ADR-0005).
-              </CardDescription>
             </div>
           </div>
 

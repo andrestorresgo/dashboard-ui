@@ -31,7 +31,10 @@ export interface ConnectivityHeaderProps {
   onSignOut?: () => void
 }
 
-export function ConnectivityHeader({ session, onSignOut }: ConnectivityHeaderProps = {}) {
+export function ConnectivityHeader({
+  session,
+  onSignOut,
+}: ConnectivityHeaderProps = {}) {
   const { theme, setTheme } = useTheme()
   const [health, setHealth] = React.useState<HealthResponse | null>(null)
   const [status, setStatus] = React.useState<ProbeStatus>("checking")
@@ -39,38 +42,41 @@ export function ConnectivityHeader({ session, onSignOut }: ConnectivityHeaderPro
   const [lastChecked, setLastChecked] = React.useState<Date | null>(null)
   const [errorMessage, setErrorMessage] = React.useState<string | null>(null)
 
-  const probeConnectivity = React.useCallback(async (showRefreshing = false) => {
-    if (showRefreshing) {
-      setIsRefreshing(true)
-    }
-    try {
-      const data = await apiClient.getHealth()
-      setErrorMessage(null)
-      setHealth(data)
-      setLastChecked(new Date())
-
-      if (data.status === "ok") {
-        setStatus("connected")
-      } else {
-        setStatus("degraded")
-      }
-    } catch (err: unknown) {
-      setStatus("disconnected")
-      setHealth(null)
-      setLastChecked(new Date())
-      if (err instanceof ApiError) {
-        setErrorMessage(`Backend returned HTTP ${err.status}: ${err.message}`)
-      } else if (err instanceof Error) {
-        setErrorMessage(err.message)
-      } else {
-        setErrorMessage("Failed to connect to Go backend service")
-      }
-    } finally {
+  const probeConnectivity = React.useCallback(
+    async (showRefreshing = false) => {
       if (showRefreshing) {
-        setIsRefreshing(false)
+        setIsRefreshing(true)
       }
-    }
-  }, [])
+      try {
+        const data = await apiClient.getHealth()
+        setErrorMessage(null)
+        setHealth(data)
+        setLastChecked(new Date())
+
+        if (data.status === "ok") {
+          setStatus("connected")
+        } else {
+          setStatus("degraded")
+        }
+      } catch (err: unknown) {
+        setStatus("disconnected")
+        setHealth(null)
+        setLastChecked(new Date())
+        if (err instanceof ApiError) {
+          setErrorMessage(`Backend returned HTTP ${err.status}: ${err.message}`)
+        } else if (err instanceof Error) {
+          setErrorMessage(err.message)
+        } else {
+          setErrorMessage("Failed to connect to Go backend service")
+        }
+      } finally {
+        if (showRefreshing) {
+          setIsRefreshing(false)
+        }
+      }
+    },
+    []
+  )
 
   React.useEffect(() => {
     // Initial probe on mount
@@ -104,7 +110,10 @@ export function ConnectivityHeader({ session, onSignOut }: ConnectivityHeaderPro
         )
       case "degraded":
         return (
-          <Badge variant="secondary" className="gap-1.5 border-destructive/30 px-2.5 py-1 text-destructive">
+          <Badge
+            variant="secondary"
+            className="gap-1.5 border-destructive/30 px-2.5 py-1 text-destructive"
+          >
             <AlertCircle className="size-3.5" />
             <span>Degraded</span>
           </Badge>
@@ -173,7 +182,8 @@ export function ConnectivityHeader({ session, onSignOut }: ConnectivityHeaderPro
                 {getStatusBadge()}
               </div>
               <p className="text-xs text-muted-foreground">
-                Distributed Sorting &amp; Counting System | Board A &amp; Board B Supervisor
+                Distributed Sorting &amp; Counting System | Board A &amp; Board
+                B Supervisor
               </p>
             </div>
           </div>
@@ -182,17 +192,22 @@ export function ConnectivityHeader({ session, onSignOut }: ConnectivityHeaderPro
           <div className="flex flex-wrap items-center gap-2">
             {session ? (
               <>
-                <Badge variant="outline" className="gap-1.5 border-primary/40 bg-primary/10 px-2.5 py-1 text-foreground">
+                <Badge
+                  variant="outline"
+                  className="gap-1.5 border-primary/40 bg-primary/10 px-2.5 py-1 text-foreground"
+                >
                   <UserCheck className="size-3.5 text-primary" />
                   <span className="font-medium">{session.username}</span>
-                  <span className="text-[11px] text-muted-foreground">(ID {session.userId})</span>
+                  <span className="text-[11px] text-muted-foreground">
+                    (ID {session.userId})
+                  </span>
                 </Badge>
                 {onSignOut && (
                   <Button
                     variant="outline"
                     size="sm"
                     onClick={onSignOut}
-                    className="gap-1.5 text-xs font-medium hover:border-destructive/40 hover:text-destructive hover:bg-destructive/10"
+                    className="gap-1.5 text-xs font-medium hover:border-destructive/40 hover:bg-destructive/10 hover:text-destructive"
                     aria-label="Sign Out"
                   >
                     <LogOut className="size-3.5" />
@@ -201,7 +216,10 @@ export function ConnectivityHeader({ session, onSignOut }: ConnectivityHeaderPro
                 )}
               </>
             ) : (
-              <Badge variant="outline" className="gap-1.5 border-border/80 px-2.5 py-1 text-muted-foreground">
+              <Badge
+                variant="outline"
+                className="gap-1.5 border-border/80 px-2.5 py-1 text-muted-foreground"
+              >
                 <Lock className="size-3.5" />
                 <span>Gate Locked</span>
               </Badge>
@@ -214,7 +232,9 @@ export function ConnectivityHeader({ session, onSignOut }: ConnectivityHeaderPro
               disabled={isRefreshing}
               className="gap-1.5 text-xs font-medium"
             >
-              <RefreshCw className={`size-3.5 ${isRefreshing ? "animate-spin" : ""}`} />
+              <RefreshCw
+                className={`size-3.5 ${isRefreshing ? "animate-spin" : ""}`}
+              />
               <span>Probe</span>
             </Button>
 
@@ -225,8 +245,8 @@ export function ConnectivityHeader({ session, onSignOut }: ConnectivityHeaderPro
               aria-label="Toggle theme"
               className="size-8 p-0"
             >
-              <Sun className="size-4 rotate-0 scale-100 transition-all dark:-rotate-90 dark:scale-0" />
-              <Moon className="absolute size-4 rotate-90 scale-0 transition-all dark:rotate-0 dark:scale-100" />
+              <Sun className="size-4 scale-100 rotate-0 transition-all dark:scale-0 dark:-rotate-90" />
+              <Moon className="absolute size-4 scale-0 rotate-90 transition-all dark:scale-100 dark:rotate-0" />
             </Button>
           </div>
         </div>
@@ -240,7 +260,9 @@ export function ConnectivityHeader({ session, onSignOut }: ConnectivityHeaderPro
             <div className="flex items-center gap-1.5">
               <Server className="size-3.5 text-muted-foreground" />
               <span className="font-medium text-foreground">Go REST API:</span>
-              <span className="font-mono text-[11px]">{config.apiUrl}</span>
+              <span className="max-w-50 truncate font-mono text-[11px]">
+                {config.apiUrl}
+              </span>
             </div>
 
             {/* DB Probe */}
@@ -253,8 +275,12 @@ export function ConnectivityHeader({ session, onSignOut }: ConnectivityHeaderPro
             {/* MQTT Broker Probe */}
             <div className="flex items-center gap-1.5">
               <Radio className="size-3.5 text-muted-foreground" />
-              <span className="font-medium text-foreground">HiveMQ Broker:</span>
-              <span className="font-mono text-[11px]">{config.mqttBrokerHost}:{config.mqttWsPort}</span>
+              <span className="font-medium text-foreground">
+                HiveMQ Broker:
+              </span>
+              <span className="max-w-50 truncate font-mono text-[11px]">
+                {config.mqttBrokerHost}:{config.mqttWsPort}
+              </span>
               {health?.mqtt?.status && getSubServiceBadge(health.mqtt.status)}
             </div>
           </div>
@@ -273,7 +299,10 @@ export function ConnectivityHeader({ session, onSignOut }: ConnectivityHeaderPro
         {status === "disconnected" && errorMessage && (
           <div className="flex items-center gap-2 rounded-lg border border-destructive/20 bg-destructive/10 px-3 py-2 text-xs text-destructive">
             <AlertCircle className="size-4 shrink-0" />
-            <span>Backend unreachable: {errorMessage} (Verify Go backend is running on {config.apiUrl})</span>
+            <span>
+              Backend unreachable: {errorMessage} (Verify Go backend is running
+              on {config.apiUrl})
+            </span>
           </div>
         )}
       </div>

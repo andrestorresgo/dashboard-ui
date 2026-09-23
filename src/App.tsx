@@ -2,11 +2,9 @@ import * as React from "react"
 import { ConnectivityHeader } from "@/components/connectivity-header"
 import { OperatorLoginCard } from "@/components/auth/operator-login-card"
 import { getSession, clearSession, type OperatorSession } from "@/lib/session"
-import { Card, CardHeader, CardTitle, CardDescription, CardContent } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
-import { Layers, ShieldCheck, Cpu, UserCheck, CheckCircle2 } from "lucide-react"
+import { ShieldCheck, UserCheck } from "lucide-react"
 import { TelemetryProvider } from "@/context/telemetry-context"
-import { useTelemetry } from "@/hooks/use-telemetry"
 import { MachinePauseBanner } from "@/components/telemetry/machine-pause-banner"
 import { SystemStatusBar } from "@/components/telemetry/system-status-bar"
 import { ServoGateControl } from "@/components/actuator/servo-gate-control"
@@ -14,11 +12,9 @@ import { ShapeTelemetryGrid } from "@/components/telemetry/shape-telemetry-grid"
 import { AccessAuditTrail } from "@/components/audit/access-audit-trail"
 
 function AuthenticatedWorkspace({ session }: { session: OperatorSession }) {
-  const telemetry = useTelemetry()
-
   return (
     <div className="space-y-6">
-      {/* Machine Pause Emergency Safety Banner (ADR-0004) */}
+      {/* Machine Pause Emergency Safety Banner */}
       <MachinePauseBanner />
 
       {/* Authenticated Operator Banner */}
@@ -43,121 +39,17 @@ function AuthenticatedWorkspace({ session }: { session: OperatorSession }) {
         </Badge>
       </div>
 
-      {/* Authoritative System Status Bar (ADR-0007 / Ticket 03) */}
+      {/* Authoritative System Status Bar */}
       <SystemStatusBar />
 
-      {/* Authoritative Sorting Servo Gate Actuation (ADR-0006, ADR-0008 / Ticket 05) */}
+      {/* Authoritative Sorting Servo Gate Actuation */}
       <ServoGateControl />
 
-      {/* Geometric Shape Telemetry Cards with 3-Bit Binary Indicators (Ticket 04) */}
+      {/* Geometric Shape Telemetry Cards with 3-Bit Binary Indicators */}
       <ShapeTelemetryGrid />
 
-      {/* Access Audit Trail (ADR-0005 / Ticket 05) */}
+      {/* Access Audit Trail */}
       <AccessAuditTrail />
-
-      {/* Overview Cards */}
-      <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
-        {/* Card: System Architecture Ready */}
-        <Card>
-          <CardHeader>
-            <div className="flex items-center justify-between">
-              <CardTitle className="flex items-center gap-2 text-base">
-                <Cpu className="size-4 text-primary" />
-                <span>Client Scaffolding</span>
-              </CardTitle>
-              <Badge variant="default">Ticket 01 Verified</Badge>
-            </div>
-            <CardDescription>
-              Base UI and shadcn primitives initialized with Emerald theme tokens.
-            </CardDescription>
-          </CardHeader>
-          <CardContent className="space-y-2 text-xs text-muted-foreground">
-            <div className="flex items-center justify-between border-b border-border/50 pb-1.5">
-              <span>UI Primitives:</span>
-              <span className="font-mono text-foreground">card, badge, alert, input, separator</span>
-            </div>
-            <div className="flex items-center justify-between border-b border-border/50 pb-1.5">
-              <span>MQTT Client:</span>
-              <span className="font-mono text-foreground">v5.16.0 (WebSocket)</span>
-            </div>
-            <div className="flex items-center justify-between">
-              <span>12-Factor Config:</span>
-              <span className="font-mono text-foreground">Active with fallbacks</span>
-            </div>
-          </CardContent>
-        </Card>
-
-        {/* Card: Auth Gate Complete */}
-        <Card>
-          <CardHeader>
-            <div className="flex items-center justify-between">
-              <CardTitle className="flex items-center gap-2 text-base">
-                <ShieldCheck className="size-4 text-primary" />
-                <span>Operator Auth Gate</span>
-              </CardTitle>
-              <Badge variant="default">Ticket 02 Verified</Badge>
-            </div>
-            <CardDescription>
-              Two-step operator authentication with quick-select and lockout countdown.
-            </CardDescription>
-          </CardHeader>
-          <CardContent className="space-y-2 text-xs text-muted-foreground">
-            <div className="flex items-center justify-between border-b border-border/50 pb-1.5">
-              <span>Active Operator:</span>
-              <span className="font-mono text-foreground">{session.username} (ID {session.userId})</span>
-            </div>
-            <div className="flex items-center justify-between border-b border-border/50 pb-1.5">
-              <span>Session Storage:</span>
-              <span className="font-mono text-foreground">localStorage active</span>
-            </div>
-            <div className="flex items-center justify-between">
-              <span>Lockout Protection:</span>
-              <span className="font-mono text-foreground">60s cooldown / per-user</span>
-            </div>
-          </CardContent>
-        </Card>
-
-        {/* Card: Hybrid Telemetry Engine */}
-        <Card>
-          <CardHeader>
-            <div className="flex items-center justify-between">
-              <CardTitle className="flex items-center gap-2 text-base">
-                <Layers className="size-4 text-primary" />
-                <span>Hybrid Telemetry Engine</span>
-              </CardTitle>
-              <Badge variant="default">Ticket 03 Verified</Badge>
-            </div>
-            <CardDescription>
-              Authoritative REST snapshot hydration with direct WebSocket streaming and 2.5s fallback.
-            </CardDescription>
-          </CardHeader>
-          <CardContent className="space-y-2 text-xs text-muted-foreground">
-            <div className="flex items-center justify-between border-b border-border/50 pb-1.5">
-              <span>Transport Channel:</span>
-              <span className="font-mono text-foreground">
-                {telemetry.transportMode === "websocket"
-                  ? "WebSocket (Live wss://)"
-                  : telemetry.transportMode === "polling"
-                    ? "REST Polling (2.5s fallback)"
-                    : "Connecting..."}
-              </span>
-            </div>
-            <div className="flex items-center justify-between border-b border-border/50 pb-1.5">
-              <span>State Hydration:</span>
-              <span className="flex items-center gap-1 font-mono text-foreground">
-                <CheckCircle2 className="size-3 text-primary" />
-                {telemetry.isHydrated ? "GET /api/v1/state loaded" : "Hydrating..."}
-              </span>
-            </div>
-            <div className="flex items-center justify-between">
-              <span>Machine Pause Interlock:</span>
-              <span className="font-mono text-foreground">
-                {telemetry.isPaused ? "PAUSE ACTIVE (Locked)" : "Clear (Armed)"}
-              </span>
-            </div>
-          </CardContent>
-        </Card>
-      </div>
     </div>
   )
 }

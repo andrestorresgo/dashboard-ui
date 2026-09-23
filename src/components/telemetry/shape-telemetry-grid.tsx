@@ -37,14 +37,9 @@ export function ShapeTelemetryGrid({
   return (
     <section className={className} aria-label="Shape Telemetry Counters">
       <div className="mb-3 flex flex-wrap items-center justify-between gap-2">
-        <div>
-          <h3 className="font-heading text-base font-semibold tracking-tight text-foreground sm:text-lg">
-            Shape Counter LED Banks (Board B)
-          </h3>
-          <p className="text-xs text-muted-foreground">
-            3-bit binary accumulation ($0–5$), 800ms observation delay, and automated batch rollovers.
-          </p>
-        </div>
+        <h3 className="font-heading text-base font-semibold tracking-tight text-foreground sm:text-lg">
+          Shape Counter LED Banks (Board B)
+        </h3>
       </div>
 
       <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
