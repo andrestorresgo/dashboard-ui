@@ -9,6 +9,7 @@ import { TelemetryProvider } from "@/context/telemetry-context"
 import { useTelemetry } from "@/hooks/use-telemetry"
 import { MachinePauseBanner } from "@/components/telemetry/machine-pause-banner"
 import { SystemStatusBar } from "@/components/telemetry/system-status-bar"
+import { ShapeTelemetryGrid } from "@/components/telemetry/shape-telemetry-grid"
 
 function AuthenticatedWorkspace({ session }: { session: OperatorSession }) {
   const telemetry = useTelemetry()
@@ -42,6 +43,9 @@ function AuthenticatedWorkspace({ session }: { session: OperatorSession }) {
 
       {/* Authoritative System Status Bar (ADR-0007 / Ticket 03) */}
       <SystemStatusBar />
+
+      {/* Geometric Shape Telemetry Cards with 3-Bit Binary Indicators (Ticket 04) */}
+      <ShapeTelemetryGrid />
 
       {/* Overview Cards */}
       <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
