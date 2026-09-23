@@ -1,9 +1,24 @@
 import * as React from "react"
-import { Activity, Database, Radio, RefreshCw, Server, Sun, Moon, AlertCircle, CheckCircle2, XCircle } from "lucide-react"
+import {
+  Activity,
+  Database,
+  Radio,
+  RefreshCw,
+  Server,
+  Sun,
+  Moon,
+  AlertCircle,
+  CheckCircle2,
+  XCircle,
+  UserCheck,
+  LogOut,
+  Lock,
+} from "lucide-react"
 
 import { apiClient, ApiError } from "@/lib/api-client"
 import { config } from "@/config/env"
 import type { HealthResponse } from "@/types/api"
+import type { OperatorSession } from "@/lib/session"
 import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
 import { Separator } from "@/components/ui/separator"
@@ -11,7 +26,12 @@ import { useTheme } from "@/components/theme-provider"
 
 type ProbeStatus = "checking" | "connected" | "degraded" | "disconnected"
 
-export function ConnectivityHeader() {
+export interface ConnectivityHeaderProps {
+  session?: OperatorSession | null
+  onSignOut?: () => void
+}
+
+export function ConnectivityHeader({ session, onSignOut }: ConnectivityHeaderProps = {}) {
   const { theme, setTheme } = useTheme()
   const [health, setHealth] = React.useState<HealthResponse | null>(null)
   const [status, setStatus] = React.useState<ProbeStatus>("checking")
@@ -158,8 +178,35 @@ export function ConnectivityHeader() {
             </div>
           </div>
 
-          {/* Action Bar (Probe button, Theme toggle) */}
-          <div className="flex items-center gap-2">
+          {/* Action Bar (Operator Badge, Sign Out, Probe button, Theme toggle) */}
+          <div className="flex flex-wrap items-center gap-2">
+            {session ? (
+              <>
+                <Badge variant="outline" className="gap-1.5 border-primary/40 bg-primary/10 px-2.5 py-1 text-foreground">
+                  <UserCheck className="size-3.5 text-primary" />
+                  <span className="font-medium">{session.username}</span>
+                  <span className="text-[11px] text-muted-foreground">(ID {session.userId})</span>
+                </Badge>
+                {onSignOut && (
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    onClick={onSignOut}
+                    className="gap-1.5 text-xs font-medium hover:border-destructive/40 hover:text-destructive hover:bg-destructive/10"
+                    aria-label="Sign Out"
+                  >
+                    <LogOut className="size-3.5" />
+                    <span>Sign Out</span>
+                  </Button>
+                )}
+              </>
+            ) : (
+              <Badge variant="outline" className="gap-1.5 border-border/80 px-2.5 py-1 text-muted-foreground">
+                <Lock className="size-3.5" />
+                <span>Gate Locked</span>
+              </Badge>
+            )}
+
             <Button
               variant="outline"
               size="sm"
@@ -168,7 +215,7 @@ export function ConnectivityHeader() {
               className="gap-1.5 text-xs font-medium"
             >
               <RefreshCw className={`size-3.5 ${isRefreshing ? "animate-spin" : ""}`} />
-              <span>Probe Now</span>
+              <span>Probe</span>
             </Button>
 
             <Button
