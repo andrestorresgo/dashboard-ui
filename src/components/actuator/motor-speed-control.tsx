@@ -42,16 +42,16 @@ const SPEED_OPTIONS: Array<{
   {
     state: "MEDIUM",
     label: "MEDIUM",
-    dutyLabel: "50% Duty",
+    dutyLabel: "70% Duty",
     icon: Gauge,
-    description: "Run conveyor motor at moderate sorting speed (50% PWM duty cycle).",
+    description: "Run conveyor motor at moderate sorting speed (70% PWM duty cycle).",
   },
   {
     state: "ON",
     label: "ON",
-    dutyLabel: "80% Duty",
+    dutyLabel: "90% Duty",
     icon: Zap,
-    description: "Run conveyor motor at standard conveyor speed (80% PWM duty cycle).",
+    description: "Run conveyor motor at standard conveyor speed (90% PWM duty cycle).",
   },
 ]
 
@@ -133,7 +133,7 @@ export function MotorSpeedControl({
           data-testid="motor-control-badge-on"
         >
           <Zap className="size-3.5" />
-          <span>MOTOR ON (80% Speed)</span>
+          <span>MOTOR ON (90% Speed)</span>
         </Badge>
       )
     }
@@ -145,7 +145,7 @@ export function MotorSpeedControl({
           data-testid="motor-control-badge-medium"
         >
           <Gauge className="size-3.5" />
-          <span>MEDIUM (50% Speed)</span>
+          <span>MEDIUM (70% Speed)</span>
         </Badge>
       )
     }
@@ -196,7 +196,7 @@ export function MotorSpeedControl({
                 ? "Physical actuation disabled. Hardware interlock de-energizes motor during Machine Pause."
                 : isPending
                   ? `Dispatching command to set motor ${pendingTarget}. Awaiting Board A telemetry confirmation (3.0s window)...`
-                  : `Conveyor speed is currently ${motorState === "ON" ? "ON (80% PWM standard feed)" : motorState === "MEDIUM" ? "MEDIUM (50% PWM sorting feed)" : "OFF (0% PWM halted)"}.`}
+                  : `Conveyor speed is currently ${motorState === "ON" ? "ON (90% PWM standard feed)" : motorState === "MEDIUM" ? "MEDIUM (70% PWM sorting feed)" : "OFF (0% PWM halted)"}.`}
             </p>
           </div>
 
@@ -296,7 +296,7 @@ export function MotorSpeedControl({
             <span>Endpoint: <span className="font-mono text-foreground font-medium">POST /api/v1/actuator/motor</span></span>
           </div>
           <div>
-            <span>States: <span className="font-mono text-foreground font-medium">OFF (0%), MEDIUM (50%), ON (80%)</span></span>
+            <span>States: <span className="font-mono text-foreground font-medium">OFF (0%), MEDIUM (70%), ON (90%)</span></span>
           </div>
           <div>
             <span>Acknowledgment Window: <span className="font-mono text-foreground font-medium">3.0s Timeout</span></span>

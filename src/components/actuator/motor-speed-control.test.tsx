@@ -17,8 +17,8 @@ describe("MotorSpeedControl Component (ADR-0004, ADR-0006, ADR-0008)", () => {
     expect(html).toContain("data-testid=\"motor-btn-medium\"")
     expect(html).toContain("data-testid=\"motor-btn-on\"")
     expect(html).toContain("0% Duty")
-    expect(html).toContain("50% Duty")
-    expect(html).toContain("80% Duty")
+    expect(html).toContain("70% Duty")
+    expect(html).toContain("90% Duty")
   })
 
   it("renders MEDIUM state when motorState is MEDIUM and unpaused", () => {
@@ -29,7 +29,7 @@ describe("MotorSpeedControl Component (ADR-0004, ADR-0006, ADR-0008)", () => {
       />
     )
 
-    expect(html).toContain("MEDIUM (50% Speed)")
+    expect(html).toContain("MEDIUM (70% Speed)")
     expect(html).toContain("data-testid=\"motor-control-badge-medium\"")
   })
 
@@ -41,7 +41,7 @@ describe("MotorSpeedControl Component (ADR-0004, ADR-0006, ADR-0008)", () => {
       />
     )
 
-    expect(html).toContain("MOTOR ON (80% Speed)")
+    expect(html).toContain("MOTOR ON (90% Speed)")
     expect(html).toContain("data-testid=\"motor-control-badge-on\"")
   })
 

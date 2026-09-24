@@ -133,7 +133,7 @@ export function SystemStatusBar({
           data-testid="motor-badge-medium"
         >
           <Gauge className="size-3.5" />
-          <span>MEDIUM (50%)</span>
+          <span>MEDIUM (70%)</span>
         </Badge>
       )
     }
