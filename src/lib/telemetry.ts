@@ -1,4 +1,4 @@
-import type { StateSnapshot, ShapeCount, SystemState, MotorSpeedState } from "@/types/api"
+import type { StateSnapshot, ShapeCount, SystemState, MotorSpeedState, ActionRecord } from "@/types/api"
 
 export const SHAPE_CIRCLE_ID = 1
 export const SHAPE_TRIANGLE_ID = 2
@@ -124,7 +124,27 @@ export function createDefaultSnapshot(): StateSnapshot {
     },
     shape_counts: createDefaultShapeCounts(),
     recent_audits: [],
+    recent_actions: [],
     mqtt_connected: false,
+  }
+}
+
+/**
+ * Pure reducer: prepends an incoming action record from factory/actions,
+ * retaining at most maxRetention entries.
+ */
+export function applyActionMessage(
+  prev: StateSnapshot,
+  action: ActionRecord,
+  maxRetention = 50
+): StateSnapshot {
+  const existing = prev.recent_actions || []
+  if (action.id && existing.some((a) => a.id === action.id)) {
+    return prev
+  }
+  return {
+    ...prev,
+    recent_actions: [action, ...existing].slice(0, maxRetention),
   }
 }
 

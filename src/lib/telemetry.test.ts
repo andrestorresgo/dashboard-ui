@@ -2,6 +2,7 @@ import { describe, expect, it } from "bun:test"
 import {
   applyTelemetryMessage,
   applyRolloverMessage,
+  applyActionMessage,
   clampBuffer,
   createDefaultSnapshot,
   resolveShapeId,
@@ -9,7 +10,7 @@ import {
   type TelemetryMessage,
   type RolloverMessage,
 } from "./telemetry"
-import type { StateSnapshot } from "@/types/api"
+import type { StateSnapshot, ActionRecord } from "@/types/api"
 
 describe("normalizeMotorState", () => {
   it("normalizes boolean values correctly", () => {
@@ -178,6 +179,7 @@ describe("applyTelemetryMessage", () => {
           timestamp: "2026-09-23T16:00:00Z",
         },
       ],
+      recent_actions: [],
       mqtt_connected: true,
     }
 
@@ -220,6 +222,7 @@ describe("applyRolloverMessage", () => {
         },
       ],
       recent_audits: [],
+      recent_actions: [],
       mqtt_connected: true,
     }
 
@@ -266,3 +269,84 @@ describe("applyRolloverMessage", () => {
     expect(updated).toEqual(initial)
   })
 })
+
+describe("applyActionMessage", () => {
+  it("prepends incoming action record to recent_actions", () => {
+    const initial = createDefaultSnapshot()
+    const action1: ActionRecord = {
+      id: "act-1",
+      action_type: "SERVO",
+      action_name: "SERVO_OPEN",
+      details: "Dispensed Circle",
+      source: "DASHBOARD",
+      timestamp: "2026-09-24T01:00:00Z",
+    }
+    const action2: ActionRecord = {
+      id: "act-2",
+      action_type: "MOTOR",
+      action_name: "MOTOR_ON",
+      details: "Conveyor started",
+      source: "HARDWARE",
+      timestamp: "2026-09-24T01:01:00Z",
+    }
+
+    const state1 = applyActionMessage(initial, action1)
+    expect(state1.recent_actions?.length).toBe(1)
+    expect(state1.recent_actions?.[0].id).toBe("act-1")
+
+    const state2 = applyActionMessage(state1, action2)
+    expect(state2.recent_actions?.length).toBe(2)
+    expect(state2.recent_actions?.[0].id).toBe("act-2")
+    expect(state2.recent_actions?.[1].id).toBe("act-1")
+  })
+
+  it("deduplicates action records with the same id", () => {
+    const initial = createDefaultSnapshot()
+    const action: ActionRecord = {
+      id: "act-dup",
+      action_type: "DETECTION",
+      action_name: "FIGURE_DETECTED",
+      details: "Detected Red Circle",
+      source: "VISION",
+      timestamp: "2026-09-24T01:00:00Z",
+    }
+
+    const state1 = applyActionMessage(initial, action)
+    const state2 = applyActionMessage(state1, action)
+    expect(state2.recent_actions?.length).toBe(1)
+    expect(state2).toBe(state1)
+  })
+
+  it("respects maxRetention limit by truncating older actions", () => {
+    let state = createDefaultSnapshot()
+    for (let i = 0; i < 10; i++) {
+      state = applyActionMessage(
+        state,
+        {
+          id: `act-${i}`,
+          action_type: "MOTOR",
+          action_name: "MOTOR_ON",
+          details: `Motor step ${i}`,
+          source: "HARDWARE",
+          timestamp: `2026-09-24T01:0${i}:00Z`,
+        },
+        5 // retention limit of 5
+      )
+    }
+
+    expect(state.recent_actions?.length).toBe(5)
+    // Most recent was act-9, oldest kept should be act-5
+    expect(state.recent_actions?.[0].id).toBe("act-9")
+    expect(state.recent_actions?.[4].id).toBe("act-5")
+  })
+})
+
+describe("createDefaultSnapshot", () => {
+  it("initializes recent_actions as empty array", () => {
+    const snapshot = createDefaultSnapshot()
+    expect(snapshot.recent_actions).toBeDefined()
+    expect(Array.isArray(snapshot.recent_actions)).toBe(true)
+    expect(snapshot.recent_actions?.length).toBe(0)
+  })
+})
+

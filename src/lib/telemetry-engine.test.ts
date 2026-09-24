@@ -65,6 +65,7 @@ describe("TelemetryEngine", () => {
       },
     ],
     recent_audits: [],
+    recent_actions: [],
     mqtt_connected: true,
   }
 
@@ -108,6 +109,7 @@ describe("TelemetryEngine", () => {
 
     expect(mockMqtt.subscribedTopics).toContain("factory/telemetry")
     expect(mockMqtt.subscribedTopics).toContain("factory/rollover")
+    expect(mockMqtt.subscribedTopics).toContain("factory/actions")
 
     const state = engine.getState()
     expect(state.wsConnected).toBe(true)
@@ -175,6 +177,36 @@ describe("TelemetryEngine", () => {
     const red = state.snapshot.shape_counts.find((s) => s.shape_id === 1)
     expect(red?.total_lifetime).toBe(15) // 10 initial + 5
     expect(red?.live_buffer).toBe(0)
+
+    engine.stop()
+  })
+
+  it("decodes factory/actions frames and updates recent_actions", async () => {
+    const engine = new TelemetryEngine({
+      apiClient: mockApiClient as unknown as ApiClient,
+      mqttConnect: () => mockMqtt as unknown as MqttClient,
+    })
+
+    await engine.start()
+    mockMqtt.emit("connect")
+
+    const actionPayload = Buffer.from(
+      JSON.stringify({
+        id: "act-test-1",
+        action_type: "SERVO",
+        action_name: "SERVO_OPEN",
+        details: "Dispensed Circle",
+        source: "DASHBOARD",
+        timestamp: "2026-09-24T01:00:00Z",
+      })
+    )
+
+    mockMqtt.emit("message", "factory/actions", actionPayload)
+
+    const state = engine.getState()
+    expect(state.snapshot.recent_actions?.length).toBe(1)
+    expect(state.snapshot.recent_actions?.[0].id).toBe("act-test-1")
+    expect(state.snapshot.recent_actions?.[0].action_name).toBe("SERVO_OPEN")
 
     engine.stop()
   })

@@ -1,10 +1,11 @@
 import mqtt, { type MqttClient, type IClientOptions } from "mqtt"
 import { apiClient as defaultApiClient, ApiClient } from "@/lib/api-client"
 import { config } from "@/config/env"
-import type { StateSnapshot } from "@/types/api"
+import type { StateSnapshot, ActionRecord } from "@/types/api"
 import {
   applyTelemetryMessage,
   applyRolloverMessage,
+  applyActionMessage,
   createDefaultSnapshot,
   type TelemetryMessage,
   type RolloverMessage,
@@ -31,6 +32,7 @@ export interface TelemetryEngineOptions {
 
 const TOPIC_TELEMETRY = "factory/telemetry"
 const TOPIC_ROLLOVER = "factory/rollover"
+const TOPIC_ACTIONS = "factory/actions"
 const DEFAULT_POLL_INTERVAL_MS = 2500
 
 export class TelemetryEngine {
@@ -157,7 +159,7 @@ export class TelemetryEngine {
           error: null,
         })
 
-        client.subscribe([TOPIC_TELEMETRY, TOPIC_ROLLOVER], (err) => {
+        client.subscribe([TOPIC_TELEMETRY, TOPIC_ROLLOVER, TOPIC_ACTIONS], (err) => {
           if (err) {
             console.error("MQTT subscription error:", err)
             this.setState({ error: `Subscription error: ${err.message}` })
@@ -183,6 +185,15 @@ export class TelemetryEngine {
             const updatedSnapshot = applyRolloverMessage(
               this.state.snapshot,
               parsed as RolloverMessage
+            )
+            this.setState({
+              snapshot: updatedSnapshot,
+              lastUpdated: new Date(),
+            })
+          } else if (topic === TOPIC_ACTIONS) {
+            const updatedSnapshot = applyActionMessage(
+              this.state.snapshot,
+              parsed as ActionRecord
             )
             this.setState({
               snapshot: updatedSnapshot,

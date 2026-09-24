@@ -10,6 +10,7 @@ import { SystemStatusBar } from "@/components/telemetry/system-status-bar"
 import { ServoGateControl } from "@/components/actuator/servo-gate-control"
 import { MotorSpeedControl } from "@/components/actuator/motor-speed-control"
 import { ShapeTelemetryGrid } from "@/components/telemetry/shape-telemetry-grid"
+import { ActionAuditTrail } from "@/components/audit/action-audit-trail"
 import { AccessAuditTrail } from "@/components/audit/access-audit-trail"
 
 function AuthenticatedWorkspace({ session }: { session: OperatorSession }) {
@@ -51,6 +52,9 @@ function AuthenticatedWorkspace({ session }: { session: OperatorSession }) {
 
       {/* Geometric Shape Telemetry Cards with 3-Bit Binary Indicators */}
       <ShapeTelemetryGrid />
+
+      {/* System Action Audit Trail */}
+      <ActionAuditTrail />
 
       {/* Access Audit Trail */}
       <AccessAuditTrail />

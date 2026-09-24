@@ -47,6 +47,7 @@ describe("ApiClient", () => {
         },
       ],
       recent_audits: [],
+      recent_actions: [],
       mqtt_connected: true,
     }
 

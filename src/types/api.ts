@@ -51,10 +51,22 @@ export interface AuditRecord {
   timestamp: string
 }
 
+export type ActionType = "SERVO" | "MOTOR" | "DETECTION" | "LOCKDOWN"
+
+export interface ActionRecord {
+  id: string
+  action_type: ActionType
+  action_name: string
+  details: string
+  source: string
+  timestamp: string
+}
+
 export interface StateSnapshot {
   system_state: SystemState | null
   shape_counts: ShapeCount[]
   recent_audits: AuditRecord[]
+  recent_actions?: ActionRecord[]
   mqtt_connected: boolean
 }
 
