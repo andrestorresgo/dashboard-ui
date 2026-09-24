@@ -43,6 +43,18 @@ describe("SystemStatusBar", () => {
     expect(html).not.toContain("HALTED / DE-ENERGIZED")
   })
 
+  it("renders MEDIUM (50%) motor badge when machine is unpaused and motorState is MEDIUM", () => {
+    const html = renderToString(
+      <SystemStatusBar
+        isPaused={false}
+        motorState="MEDIUM"
+        transportMode="websocket"
+      />
+    )
+    expect(html).toContain("MEDIUM (50%)")
+    expect(html).not.toContain("HALTED / DE-ENERGIZED")
+  })
+
   it("renders HALTED motor badge when machine is unpaused and motorState is false", () => {
     const html = renderToString(
       <SystemStatusBar

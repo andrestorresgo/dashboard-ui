@@ -8,18 +8,21 @@ import {
   Clock,
   Sliders,
   CheckCircle2,
+  Gauge,
 } from "lucide-react"
 import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent } from "@/components/ui/card"
 import { TelemetryContext } from "@/hooks/use-telemetry"
 import type { TransportMode } from "@/lib/telemetry-engine"
+import type { MotorSpeedState } from "@/types/api"
+import { normalizeMotorState } from "@/lib/telemetry"
 
 export interface SystemStatusBarProps {
   transportMode?: TransportMode
   wsConnected?: boolean
   isPaused?: boolean
-  motorState?: boolean
+  motorState?: MotorSpeedState | boolean
   servoState?: boolean
   lastUpdated?: Date | null
   onRefresh?: () => void
@@ -40,7 +43,8 @@ export function SystemStatusBar({
 
   const transportMode = propTransportMode ?? telemetry?.transportMode ?? "connecting"
   const isPaused = propIsPaused ?? telemetry?.isPaused ?? false
-  const motorState = propMotorState ?? telemetry?.motorState ?? false
+  const rawMotor = propMotorState ?? telemetry?.motorState ?? "OFF"
+  const motorSpeed = normalizeMotorState(rawMotor)
   const servoState = propServoState ?? telemetry?.servoState ?? false
   const lastUpdated = propLastUpdated ?? telemetry?.lastUpdated ?? null
   const onRefresh = propOnRefresh ?? telemetry?.refetchState
@@ -109,7 +113,7 @@ export function SystemStatusBar({
         </Badge>
       )
     }
-    if (motorState) {
+    if (motorSpeed === "ON") {
       return (
         <Badge
           variant="default"
@@ -118,6 +122,18 @@ export function SystemStatusBar({
         >
           <Zap className="size-3.5 text-primary-foreground" />
           <span>RUNNING</span>
+        </Badge>
+      )
+    }
+    if (motorSpeed === "MEDIUM") {
+      return (
+        <Badge
+          variant="secondary"
+          className="gap-1.5 border-amber-500/30 text-amber-500 px-2.5 py-1 font-semibold shadow-xs"
+          data-testid="motor-badge-medium"
+        >
+          <Gauge className="size-3.5" />
+          <span>MEDIUM (50%)</span>
         </Badge>
       )
     }

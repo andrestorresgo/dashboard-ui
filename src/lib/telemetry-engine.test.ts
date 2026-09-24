@@ -141,7 +141,7 @@ describe("TelemetryEngine", () => {
 
     const state = engine.getState()
     expect(state.snapshot.system_state?.is_paused).toBe(true)
-    expect(state.snapshot.system_state?.motor_state).toBe(true)
+    expect(state.snapshot.system_state?.motor_state).toBe("ON")
     expect(state.snapshot.system_state?.servo_state).toBe(false)
 
     const red = state.snapshot.shape_counts.find((s) => s.shape_id === 1)

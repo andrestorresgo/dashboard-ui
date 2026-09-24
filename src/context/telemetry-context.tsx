@@ -1,5 +1,6 @@
 import * as React from "react"
 import { TelemetryEngine, type TelemetryState, type TelemetryEngineOptions } from "@/lib/telemetry-engine"
+import { normalizeMotorState } from "@/lib/telemetry"
 import { TelemetryContext, type TelemetryContextValue } from "./telemetry-context-def"
 
 export interface TelemetryProviderProps {
@@ -36,7 +37,7 @@ export function TelemetryProvider({
   }, [engine])
 
   const isPaused = Boolean(telemetryState.snapshot.system_state?.is_paused)
-  const motorState = Boolean(telemetryState.snapshot.system_state?.motor_state)
+  const motorState = normalizeMotorState(telemetryState.snapshot.system_state?.motor_state)
   const servoState = Boolean(telemetryState.snapshot.system_state?.servo_state)
 
   const value = React.useMemo<TelemetryContextValue>(

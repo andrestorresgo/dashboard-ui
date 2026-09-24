@@ -19,11 +19,13 @@ export interface HealthResponse {
   mqtt: MQTTStatus
 }
 
+export type MotorSpeedState = "OFF" | "MEDIUM" | "ON"
+
 // /api/v1/state response
 export interface SystemState {
   id: number
   is_paused: boolean
-  motor_state: boolean
+  motor_state: MotorSpeedState | boolean
   servo_state: boolean
   last_telemetry_at: string | null
 }
@@ -78,6 +80,16 @@ export interface ServoCommandRequest {
 }
 
 export interface ServoCommandResult {
+  status: string
+  state: string
+}
+
+// /api/v1/actuator/motor request and response
+export interface MotorCommandRequest {
+  state: MotorSpeedState
+}
+
+export interface MotorCommandResult {
   status: string
   state: string
 }

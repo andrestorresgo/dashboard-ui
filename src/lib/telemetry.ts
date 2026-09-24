@@ -1,4 +1,4 @@
-import type { StateSnapshot, ShapeCount, SystemState } from "@/types/api"
+import type { StateSnapshot, ShapeCount, SystemState, MotorSpeedState } from "@/types/api"
 
 export const SHAPE_CIRCLE_ID = 1
 export const SHAPE_TRIANGLE_ID = 2
@@ -8,9 +8,21 @@ export const MIN_LIVE_BUFFER = 0
 export const MAX_LIVE_BUFFER = 5
 export const ROLLOVER_BATCH_INCREMENT = 5
 
+export function normalizeMotorState(val: unknown): MotorSpeedState {
+  if (typeof val === "string") {
+    const upper = val.trim().toUpperCase()
+    if (upper === "MEDIUM" || upper === "2") return "MEDIUM"
+    if (upper === "ON" || upper === "1" || upper === "TRUE") return "ON"
+    return "OFF"
+  }
+  if (val === 2) return "MEDIUM"
+  if (val === true || val === 1) return "ON"
+  return "OFF"
+}
+
 export interface TelemetryMessage {
   is_paused: boolean
-  motor_state: boolean
+  motor_state: MotorSpeedState | boolean | number | string
   servo_state: boolean
   red_count: number
   green_count: number
@@ -106,7 +118,7 @@ export function createDefaultSnapshot(): StateSnapshot {
     system_state: {
       id: 1,
       is_paused: false,
-      motor_state: false,
+      motor_state: "OFF",
       servo_state: false,
       last_telemetry_at: null,
     },
@@ -128,7 +140,7 @@ export function applyTelemetryMessage(
   const updatedSystemState: SystemState = {
     id: prev.system_state?.id ?? 1,
     is_paused: Boolean(msg.is_paused),
-    motor_state: Boolean(msg.motor_state),
+    motor_state: normalizeMotorState(msg.motor_state),
     servo_state: Boolean(msg.servo_state),
     last_telemetry_at: now,
   }

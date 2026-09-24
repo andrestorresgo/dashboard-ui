@@ -5,10 +5,40 @@ import {
   clampBuffer,
   createDefaultSnapshot,
   resolveShapeId,
+  normalizeMotorState,
   type TelemetryMessage,
   type RolloverMessage,
 } from "./telemetry"
 import type { StateSnapshot } from "@/types/api"
+
+describe("normalizeMotorState", () => {
+  it("normalizes boolean values correctly", () => {
+    expect(normalizeMotorState(true)).toBe("ON")
+    expect(normalizeMotorState(false)).toBe("OFF")
+  })
+
+  it("normalizes integer values correctly", () => {
+    expect(normalizeMotorState(0)).toBe("OFF")
+    expect(normalizeMotorState(1)).toBe("ON")
+    expect(normalizeMotorState(2)).toBe("MEDIUM")
+  })
+
+  it("normalizes string values case-insensitively", () => {
+    expect(normalizeMotorState("off")).toBe("OFF")
+    expect(normalizeMotorState("OFF")).toBe("OFF")
+    expect(normalizeMotorState("medium")).toBe("MEDIUM")
+    expect(normalizeMotorState("MEDIUM")).toBe("MEDIUM")
+    expect(normalizeMotorState("on")).toBe("ON")
+    expect(normalizeMotorState("ON")).toBe("ON")
+    expect(normalizeMotorState("true")).toBe("ON")
+  })
+
+  it("defaults unknown or null values to OFF", () => {
+    expect(normalizeMotorState(null)).toBe("OFF")
+    expect(normalizeMotorState(undefined)).toBe("OFF")
+    expect(normalizeMotorState("unknown")).toBe("OFF")
+  })
+})
 
 describe("clampBuffer", () => {
   it("clamps values between 0 and 5", () => {
@@ -65,7 +95,7 @@ describe("applyTelemetryMessage", () => {
     const updated = applyTelemetryMessage(initial, telemetryMsg)
 
     expect(updated.system_state?.is_paused).toBe(false)
-    expect(updated.system_state?.motor_state).toBe(true)
+    expect(updated.system_state?.motor_state).toBe("ON")
     expect(updated.system_state?.servo_state).toBe(true)
     expect(updated.system_state?.last_telemetry_at).toBeTruthy()
 
@@ -77,6 +107,21 @@ describe("applyTelemetryMessage", () => {
     expect(red?.live_buffer).toBe(3)
     expect(green?.live_buffer).toBe(5)
     expect(blue?.live_buffer).toBe(1)
+  })
+
+  it("updates motor_state to MEDIUM when receiving medium telemetry", () => {
+    const initial = createDefaultSnapshot()
+    const telemetryMsg: TelemetryMessage = {
+      is_paused: false,
+      motor_state: "MEDIUM",
+      servo_state: false,
+      red_count: 1,
+      green_count: 2,
+      blue_count: 3,
+    }
+
+    const updated = applyTelemetryMessage(initial, telemetryMsg)
+    expect(updated.system_state?.motor_state).toBe("MEDIUM")
   })
 
   it("clamps incoming counts that exceed the 5-item buffer constraint", () => {
@@ -93,7 +138,7 @@ describe("applyTelemetryMessage", () => {
     const updated = applyTelemetryMessage(initial, telemetryMsg)
 
     expect(updated.system_state?.is_paused).toBe(true)
-    expect(updated.system_state?.motor_state).toBe(false)
+    expect(updated.system_state?.motor_state).toBe("OFF")
     expect(updated.system_state?.servo_state).toBe(false)
 
     const red = updated.shape_counts.find((s) => s.shape_id === 1)

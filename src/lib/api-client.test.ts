@@ -148,6 +148,28 @@ describe("ApiClient", () => {
     expect(result).toEqual(mockResult)
   })
 
+  it("dispatches motor command to /api/v1/actuator/motor", async () => {
+    const mockResult = {
+      status: "dispatched",
+      state: "MEDIUM",
+    }
+
+    const mockFetch = mock(async (url: string | URL | Request, init?: RequestInit) => {
+      expect(url.toString()).toBe(`${BASE_URL}/api/v1/actuator/motor`)
+      expect(init?.method).toBe("POST")
+      expect(JSON.parse(init?.body as string)).toEqual({ state: "MEDIUM" })
+      return new Response(JSON.stringify(mockResult), {
+        status: 200,
+        headers: { "Content-Type": "application/json" },
+      })
+    })
+
+    const client = new ApiClient(BASE_URL, mockFetch as unknown as typeof fetch)
+    const result = await client.commandMotor({ state: "MEDIUM" })
+
+    expect(result).toEqual(mockResult)
+  })
+
   it("throws ApiError when server returns 500 Internal Server Error", async () => {
     const mockFetch = mock(async () => {
       return new Response(JSON.stringify({ error: "database connection failed" }), {

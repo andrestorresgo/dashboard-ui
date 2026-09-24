@@ -6,6 +6,8 @@ import type {
   AuthResponse,
   ServoCommandRequest,
   ServoCommandResult,
+  MotorCommandRequest,
+  MotorCommandResult,
 } from "@/types/api"
 
 export class ApiError extends Error {
@@ -123,6 +125,16 @@ export class ApiClient {
    */
   async commandServo(req: ServoCommandRequest): Promise<ServoCommandResult> {
     return this.request<ServoCommandResult>("/api/v1/actuator/servo", {
+      method: "POST",
+      body: JSON.stringify(req),
+    })
+  }
+
+  /**
+   * Commands the physical conveyor DC motor speed via POST /api/v1/actuator/motor.
+   */
+  async commandMotor(req: MotorCommandRequest): Promise<MotorCommandResult> {
+    return this.request<MotorCommandResult>("/api/v1/actuator/motor", {
       method: "POST",
       body: JSON.stringify(req),
     })

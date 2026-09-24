@@ -8,6 +8,7 @@ import { TelemetryProvider } from "@/context/telemetry-context"
 import { MachinePauseBanner } from "@/components/telemetry/machine-pause-banner"
 import { SystemStatusBar } from "@/components/telemetry/system-status-bar"
 import { ServoGateControl } from "@/components/actuator/servo-gate-control"
+import { MotorSpeedControl } from "@/components/actuator/motor-speed-control"
 import { ShapeTelemetryGrid } from "@/components/telemetry/shape-telemetry-grid"
 import { AccessAuditTrail } from "@/components/audit/access-audit-trail"
 
@@ -42,8 +43,11 @@ function AuthenticatedWorkspace({ session }: { session: OperatorSession }) {
       {/* Authoritative System Status Bar */}
       <SystemStatusBar />
 
-      {/* Authoritative Sorting Servo Gate Actuation */}
-      <ServoGateControl />
+      {/* Authoritative Physical Actuators: Motor Speed & Servo Gate */}
+      <div className="grid grid-cols-1 gap-6 lg:grid-cols-2">
+        <MotorSpeedControl />
+        <ServoGateControl />
+      </div>
 
       {/* Geometric Shape Telemetry Cards with 3-Bit Binary Indicators */}
       <ShapeTelemetryGrid />
